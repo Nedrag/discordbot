@@ -1,19 +1,27 @@
-from unicodedata import name
-import char as c
+
 
 class Player:
-    def __init__(self, id, char):
 
-        self.id = id
-        self.char = char
+    def __init__(self, str, int, dex) -> None:
+        self.str = str
+        self.int = int
+        self.dex = dex
+        self.hp = 100*self.str
+        self.mp = 100*self.str
+
+    def player_take_dmg(amount, player):
+        player.hp -= amount
+        return player.hp
     
-    def get_char(self, name, id, klasa, str, int, dex):
-        char = c.get_char(name, klasa, str, int , dex)
-        self.id = id
-        return char 
+    def player_deal_dmg(self, amount, to_who):
+        to_who.hp -= amount
+        return to_who.hp
 
-def get_player(id, char):
-    player = Player(char, id)
+    def player_dead(player):
+        if player.hp == 0:
+            return True
+        else:
+            return False
 
-    return player
 
+        

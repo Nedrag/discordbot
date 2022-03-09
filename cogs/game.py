@@ -52,7 +52,8 @@ class Game(commands.Cog):
 
         self.is_player1_dead = False
         self.is_player2_dead = False
-        
+        self.members = []
+
 
 
         
@@ -69,9 +70,12 @@ class Game(commands.Cog):
         #sends the game begins msg and ticks the is_game_on check
         await ctx.send('The combat begins')
         self.is_game_started = True
+        #gets all the members
+        self.members = await ctx.guild.fetch_members(limit = None).flatten()
+        for i in self.members:
+            print(i)
 
-        #await ctx.send(f'player1hp : {self.player1.hp}')
-        #await ctx.send(f'player2hp : {self.player2.hp}')
+
 
     @commands.command()
     #combat is gonna be turnbased, so it assigns roles to each player and sees whos turn it  is

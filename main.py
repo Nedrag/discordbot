@@ -6,7 +6,8 @@ from discord.ext import commands
 token_file = open('token.txt', 'r')
 token = token_file.read()
 #
-client = commands.Bot(command_prefix='.') 
+intents_all = discord.Intents().all()
+client = commands.Bot(command_prefix='.', intents = intents_all) 
 
 @client.command()
 async def load(ctx, extension):

@@ -33,6 +33,7 @@ class CreateChar(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print('Logged in as {0.user}'.format(self.client))
+        
     
     @commands.command(aliases = ['cc', 'create'], brief = create_char_brief )
     async def create_char(self, ctx, intl, dex, stre, name):

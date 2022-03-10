@@ -1,5 +1,6 @@
 from __future__ import with_statement
 from ast import alias
+from unicodedata import name
 import discord
 from discord.ext import commands,tasks
 import player
@@ -53,6 +54,12 @@ class Game(commands.Cog):
         self.is_player1_dead = False
         self.is_player2_dead = False
         self.members = []
+        self.guild_roles = []
+        
+        self.attacker_role = 0
+        self.deffender_role = 0
+        self.turn_counter = 0
+
 
 
 
@@ -75,47 +82,100 @@ class Game(commands.Cog):
         for i in self.members:
             print(i)
 
+        #roles for adding
+        self.guild_roles = await ctx.guild.fetch_roles()
+        for i in self.guild_roles:
+            if str(i.name) == 'atk':
+                self.attacker_role = i
+            if str(i.name) == 'def':
+                self.deffender_role = i
+        for i in self.members:
+            print(i.roles)
+        
+
+        await ctx.message.author.remove_roles(self.deffender_role)
+        await ctx.message.author.add_roles(self.attacker_role)
+        for i in self.members:
+            if str(self.player2.id) == str(i):
+                await i.remove_roles(self.attacker_role)
+                await i.add_roles(self.deffender_role)
+            
+        self.turn_counter = 1
+
+
+
 
 
     @commands.command()
     #combat is gonna be turnbased, so it assigns roles to each player and sees whos turn it  is
     async def move(self, ctx, move_id):
-        #checks if the has started
+        author_role = ctx.message.author.roles[1]
+        #
+        #checks if game the has started and if the author has the appropriate role
         if self.is_game_started == False:
+
             await ctx.send('Game Hasn`t started yet!')
+        elif self.player1.hp <= 0 or self.player2.hp <= 0:
+            await ctx.send('The combat has ended!')
         else:
+
+            
+                
+                
+
+
+
             move_exists = False
             #finds the move in the predefined move list
             for i in self.moves_list_off:
                 if str(move_id) == str(i.name):
                     move_name = i.name
-                    move_dmg = i.base_dmg
+                    move_dmg = moves.get_move_dmg(i.base_dmg,self.player1.char.int)
                     move_exists = True
             #if the move exists changes the opposing player hp by the amount of dmg 
             #the move deals and it needs to check whos who
 
             #player1 moves
-            if move_exists and str(ctx.message.author)  == self.player1.id and self.player2.hp > 0:
-                amount_dealt = self.player2.hp  - self.player2.player_take_dmg(move_dmg)
+            if move_exists and str(ctx.message.author)  == self.player1.id and self.player2.hp > 0 and author_role.name == 'atk':
+                amount_dealt = self.player2.hp  - self.player2.player_take_dmg(move_dmg) 
                 await ctx.send(f'{self.player2.name} has taken {amount_dealt} dmg from {self.player1.name}s {move_name}')
-                await ctx.send(f'{self.player2.name} has {self.player2.hp} health remaning!')
-                if self.player2.hp == 0:
+                
+                
+                if self.player2.hp <= 0:
                     self.is_player1_dead = True
                     await ctx.send('You`ve done it you sick bastard! You`ve killed him!')
-            elif self.player2.hp == 0:
-                await ctx.send('What are you doing, HE`S ALREADY DEAD!')
+                    await ctx.send('The combat ends')
+                    
+                else:
+                    await ctx.send(f'{self.player2.name} has {self.player2.hp} health remaning!')
+                    await ctx.message.author.remove_roles(self.attacker_role)
+                    await ctx.message.author.add_roles(self.deffender_role)
+                    for i in self.members:
+                        if str(i) == str(self.player2.id):
+                            await i.remove_roles(self.deffender_role)
+                            await i.add_roles(self.attacker_role)
+                    self.turn_counter += 1
+
 
             #player2 moves
-            if move_exists and str(ctx.message.author)  == self.player2.id and self.player1.hp >0:
+            if move_exists and str(ctx.message.author)  == str(self.player2.id) and self.player1.hp >0 and author_role.name == 'atk':
                 amount_dealt = self.player1.hp  - self.player1.player_take_dmg(move_dmg)
                 await ctx.send(f'{self.player1.name} has taken {amount_dealt} dmg from {self.player2.name}s {move_name}')
-                await ctx.send(f'{self.player1.name} has {self.player1.hp} health remaning!')
-                if self.player1.hp == 0:
+                if self.player1.hp <= 0:
                     self.is_player1_dead = True
                     await ctx.send('You`ve done it you sick bastard! You`ve killed him!')
+                else:
+                    await ctx.send(f'{self.player1.name} has {self.player1.hp} health remaning!')
+                    await ctx.message.author.remove_roles(self.attacker_role)
+                    await ctx.message.author.add_roles(self.deffender_role)
+                    for i in self.members:
+                        if str(i) == str(self.player1.id):
+                            await i.remove_roles(self.deffender_role)
+                            await i.add_roles(self.attacker_role)
+                    self.turn_counter += 1
+                    
 
-            elif self.player1.hp == 0:
-                await ctx.send('What are you doing, HE`S ALREADY DEAD!')
+
         
 
         

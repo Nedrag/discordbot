@@ -1,13 +1,15 @@
-from __future__ import with_statement
-from ast import alias
-from unicodedata import name
+
+import random
 import discord
 from discord.ext import commands,tasks
-import player
-import char
-import moves
+import player as player
+import char as char
+import moves as moves
+import dungeon as d
 DIRECTORY_DATA = r'cogs/data.txt'
 
+def format_dmg(dmg):
+    return f'{dmg:.2f}' 
 
 
 
@@ -59,7 +61,10 @@ class Game(commands.Cog):
         self.attacker_role = 0
         self.deffender_role = 0
         self.turn_counter = 0
-
+        
+        self.enemies = []
+        self.dungeon_instance = 0 
+        self.dng_started = False
 
 
 
@@ -105,12 +110,11 @@ class Game(commands.Cog):
 
 
 
-
+#pvp combat
     @commands.command()
     #combat is gonna be turnbased, so it assigns roles to each player and sees whos turn it  is
-    async def move(self, ctx, move_id):
+    async def move(self, ctx, move_id): 
         author_role = ctx.message.author.roles[1]
-        #
         #checks if game the has started and if the author has the appropriate role
         if self.is_game_started == False:
 
@@ -118,35 +122,36 @@ class Game(commands.Cog):
         elif self.player1.hp <= 0 or self.player2.hp <= 0:
             await ctx.send('The combat has ended!')
         else:
-
-            
-                
-                
-
-
-
             move_exists = False
             #finds the move in the predefined move list
-            for i in self.moves_list_off:
-                if str(move_id) == str(i.name):
-                    move_name = i.name
-                    move_dmg = moves.get_move_dmg(i.base_dmg,self.player1.char.int)
+            for i in self.moves_list_off.keys():
+                if str(move_id) == str(i):
+                    move_name = self.moves_list_off[i].name
+                    move_dmg = moves.get_move_dmg(self.moves_list_off[i].base_dmg,self.player1.char.int)
                     move_exists = True
+                    #move embeds
+                    embed_move = discord.Embed(title = move_name, type = 'rich', colour = 100 )
+                    embed_move.add_field(name = 'Damage:', value =format_dmg(move_dmg), inline = True )
             #if the move exists changes the opposing player hp by the amount of dmg 
             #the move deals and it needs to check whos who
 
             #player1 moves
             if move_exists and str(ctx.message.author)  == self.player1.id and self.player2.hp > 0 and author_role.name == 'atk':
                 amount_dealt = self.player2.hp  - self.player2.player_take_dmg(move_dmg) 
-                await ctx.send(f'{self.player2.name} has taken {amount_dealt} dmg from {self.player1.name}s {move_name}')
+                await ctx.send(f'{self.player2.name} has taken {amount_dealt:.2f} dmg from {self.player1.name}s {move_name}')
+                await ctx.send(embed = embed_move)
                 
                 
                 if self.player2.hp <= 0:
+                    embed_move.add_field(name = f'{self.player2.name} HP: ', value= 0)
+                    embed_move.add_field(name = f'{self.player1.name} HP: ', value= format_dmg(self.player1.hp))
                     self.is_player1_dead = True
-                    await ctx.send('You`ve done it you sick bastard! You`ve killed him!')
+                    await ctx.send(r'You`ve done it you sick bastard! You`ve killed him!')
                     await ctx.send('The combat ends')
                     
                 else:
+                    embed_move.add_field(name = f'Player {self.player1.name} HP: ', value = self.player1.hp, inline = True)
+                    embed_move.add_field(name = f'Player {self.player2.name} HP: ', value = self.player2.hp, inline = True)
                     await ctx.send(f'{self.player2.name} has {self.player2.hp} health remaning!')
                     await ctx.message.author.remove_roles(self.attacker_role)
                     await ctx.message.author.add_roles(self.deffender_role)
@@ -159,12 +164,18 @@ class Game(commands.Cog):
 
             #player2 moves
             if move_exists and str(ctx.message.author)  == str(self.player2.id) and self.player1.hp >0 and author_role.name == 'atk':
-                amount_dealt = self.player1.hp  - self.player1.player_take_dmg(move_dmg)
+                amount_dealt = self.player1.hp  - self.player1.player_take_dmg(move_dmg * 5)
                 await ctx.send(f'{self.player1.name} has taken {amount_dealt} dmg from {self.player2.name}s {move_name}')
+                await ctx.send(embed = embed_move)
+
                 if self.player1.hp <= 0:
+                    embed_move.add_field(name = f'{self.player1.name} HP: ', value= 0)
+                    embed_move.add_field(name = f'{self.player2.name} HP: ', value= format_dmg(self.player2.hp))
                     self.is_player1_dead = True
                     await ctx.send('You`ve done it you sick bastard! You`ve killed him!')
                 else:
+                    embed_move.add_field(name = f'Player {self.player1.name} HP: ', value = self.player1.hp, inline = True)
+                    embed_move.add_field(name = f'Player {self.player2.name} HP: ', value = self.player2.hp, inline = True)
                     await ctx.send(f'{self.player1.name} has {self.player1.hp} health remaning!')
                     await ctx.message.author.remove_roles(self.attacker_role)
                     await ctx.message.author.add_roles(self.deffender_role)
@@ -173,7 +184,48 @@ class Game(commands.Cog):
                             await i.remove_roles(self.deffender_role)
                             await i.add_roles(self.attacker_role)
                     self.turn_counter += 1
-                    
+#starts the dungeon run
+#dungeon runs
+    @commands.command(aliases = ['start_dungeon', 'sd'])
+    async def dung_run(self, ctx, dng_name):
+
+        self.dng_started = True
+        randomize = [random.randint(1, 4),random.randint(1, 4),random.randint(1, 4),random.randint(1, 4)]
+       #creates an instance 
+        self.dungeon_instance = d.DungeonInstance(dng_name).dng_instance  
+        for i in randomize:
+            await ctx.send(f'{self.dungeon_instance["enemy_weak"][i - 1]}')
+        await self.dng_combat(ctx)
+
+
+        
+        
+
+    @commands.command()
+    async def dng_combat(self, ctx):
+        if self.dng_started:
+            await ctx.send(f'{self.dungeon_instance["enemy_weak"][random.randint(0, 3)]}')
+            await ctx.send('Is in front of you!')
+            await ctx.send('Do you want to attack it')
+            
+
+
+
+        
+
+    @commands.command()
+    async def d(self, ctx, player_move, spell):
+        pass
+        
+    
+
+        
+
+        
+
+
+
+
 
 
         

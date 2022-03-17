@@ -1,3 +1,4 @@
+import json
 CLASS_MULTIPLIER = 3.14/3
 
 class Move():
@@ -8,7 +9,21 @@ class Move():
         self.name = name
 
 
-moves_off = [Move(100, 'str', 1), Move(100, 'int', 2), Move(100, 'dex', 3)]
+
+moves_off = {} 
+moves_json = open(r'cogs/data.json')
+f = json.load(moves_json)
+
+for i in f["moves"]:
+    
+    moves_off[i["move_id"]] = Move(i["move_base_dmg"], i["move_type"], i["move_name"])
+
+moves_json.close()
+for i in moves_off.keys():
+    print(moves_off[i].name)
+
+
+
 
 def print_moves():
     for i in moves_off:
@@ -16,7 +31,7 @@ def print_moves():
 
 def get_move_dmg(base : int, attribute: int):
 
-    return base * CLASS_MULTIPLIER  
+    return base * CLASS_MULTIPLIER 
     
 
 def get_move_list():

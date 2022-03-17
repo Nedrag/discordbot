@@ -1,0 +1,78 @@
+{"moves": [
+    {
+        "move_id": 1,
+        "move_name": "Frostbolt",
+        "move_base_dmg": 100,
+        "move_type": "int"
+    },
+    {
+        "move_id": 2,
+        "move_name": "Fireball",
+        "move_base_dmg": 100,
+        "move_type": "int"
+    },
+    {
+        "move_id": 3,
+        "move_name": "Blizzard",
+        "move_base_dmg": 100,
+        "move_type": "int"
+    },
+    {
+        "move_id": 4,
+        "move_name": "Crushing Blow",
+        "move_base_dmg": 100,
+        "move_type": "str"
+    },
+    {
+        "move_id": 5,
+        "move_name": "Judgment",
+        "move_base_dmg": 100,
+        "move_type": "str"
+    },
+    {
+        "move_id": 6,
+        "move_name": "Hammer of Justice",
+        "move_base_dmg": 100,
+        "move_type": "str"
+    },
+    {
+        "move_id": 7,
+        "move_name": "Cheap Shot",
+        "move_base_dmg": 100,
+        "move_type": "dex"
+    },
+    {
+        "move_id": 8,
+        "move_name": "Sinister Strike",
+        "move_base_dmg": 100,
+        "move_type": "dex"
+    },
+    {
+        "move_id": 9,
+        "move_name": "Ambush",
+        "move_base_dmg": 100,
+        "move_type": "dex"
+    }
+
+    
+],
+"dungeons":{
+    "ragefire_chasm": {
+        "enemy_weak":[
+            "Lava Elemental",
+            "Trogg",
+            "Satyr",
+            "Felguard"
+        ],
+        "enemy_miniboss":[
+            "Zelemar The Wrathful",
+            "Taragaman The Hungerer",
+            "Maur Grimtotem"
+        ],
+        "enemy_boss":[
+            "Bazzalan"
+        ]
+
+    }
+}
+}

@@ -1,0 +1,53 @@
+{
+    "data": {
+        "nedrag#7663": {
+            "character": {
+                "char_name": "pedja",
+                "dex": 10,
+                "hp": "10101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010",
+                "int": 10,
+                "inventory": {
+                    "gear": {
+                        "arm_slot1": "Empty",
+                        "arm_slot2": "Empty",
+                        "arms": "Empty",
+                        "body": "Tunic",
+                        "boots": "Leather Boots",
+                        "helmet": "White Wash Cap",
+                        "legs": "Empty"
+                    },
+                    "gold": 100,
+                    "items": {}
+                },
+                "mp": "10101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010101010",
+                "str": 10
+            }
+        },
+        "player_id": {
+            "character": {
+                "char_name": "test",
+                "dex": 10,
+                "hp": 9999999,
+                "int": 10,
+                "inventory": {
+                    "gear": {
+                        "arm_slot1": "Empty",
+                        "arm_slot2": "Empty",
+                        "arms": "Empty",
+                        "body": "Tunic",
+                        "boots": "Leather Boots",
+                        "helmet": "White Wash Cap",
+                        "legs": "Empty"
+                    },
+                    "gold": 999999,
+                    "items": {
+                        "feline_fur": 99,
+                        "mana_orbs": 99
+                    }
+                },
+                "mp": 9999999,
+                "str": 10
+            }
+        }
+    }
+}

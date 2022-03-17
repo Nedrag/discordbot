@@ -1,6 +1,8 @@
 v0.13
 -changed the player creation proccess a bit
   -all player data is now stored in a json
+-added a error handler for MissingArgument
+
 WISHILIST FOR v0.14
 -the combat needs to be reworked, I want it to be purely PVE 
   -The gameplay loop should be something like FO4(battle -> geather resources -> get strogner -> battle)

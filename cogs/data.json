@@ -58,20 +58,25 @@
 ],
 "dungeons":{
     "ragefire_chasm": {
-        "enemy_weak":[
-            "Lava Elemental",
-            "Trogg",
-            "Satyr",
-            "Felguard"
-        ],
-        "enemy_miniboss":[
-            "Zelemar The Wrathful",
-            "Taragaman The Hungerer",
-            "Maur Grimtotem"
-        ],
-        "enemy_boss":[
-            "Bazzalan"
-        ]
+        "enemy_weak":{
+            "Lava Elemental" : {},
+            "Trogg" : {},
+            "Satyr" : {},
+            "Felguard" : {}
+        },
+        "enemy_miniboss":{
+            "Zelemar The Wrathful": {},
+            "Taragaman The Hungerer":{},
+            "Maur Grimtotem": {}
+        },
+        "enemy_boss":{
+            "Bazzalan": {}
+        },
+        "loot":{},
+
+        "name" : "Ragefire Chasm",
+
+        "level_req": 1
 
     }
 }

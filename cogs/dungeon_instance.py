@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import json
+import player
 """ Dungeons are going to be formated like so:
 1. Every dungeon gets a dedicated text channel in  witch
  multiple people can participate to kill the boss and the thrash mobs
@@ -20,6 +21,14 @@ def json_get_dng(name, data = r'cogs/data.json'):
         dng = {}
         f['dungeons'][name] = dng
     return dng
+
+def json_keep_track(name, dmg, data = r'cogs/raid_log.json'):
+    with open(data, 'w+') as file:
+        f = {}
+        f[str(name)] = dmg
+
+        json.dump(f, data, indent = 4, sort_keys=True)
+    
 
 
 
@@ -41,6 +50,7 @@ class DungeonInstance(commands.Cog):
         self.rfc_mb_spaw = self.rfc_data["enemy_miniboss"]
         self.rfc_boss = self.rfc_data["enemy_boss"]
         self.rfc_channel = self.raid_channels[0] 
+        self.rfc_spawntime = 0
 
 
         
@@ -51,6 +61,8 @@ class DungeonInstance(commands.Cog):
         for i in self.raid_channels:
             if i == str(ctx.message.channel):
                 pass
+
+                
 
 def setup(client):
     client.load_extension(DungeonInstance(client))

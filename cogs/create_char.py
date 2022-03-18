@@ -2,8 +2,9 @@ import json
 import discord
 from discord.ext import commands
 import player as p 
+PLAYER_DIRECTORY = r'cogs/player_items.json'
 
-def user_exists(author_name, data = r'cogs/player_items.json'):
+def user_exists(author_name, data = PLAYER_DIRECTORY):
     file= open(data, 'r+' )
     f = json.load(file)
     for i in f["data"].keys():
@@ -13,7 +14,7 @@ def user_exists(author_name, data = r'cogs/player_items.json'):
             False
 
 #loads a dictionary form a json file
-def json_load(data_to_load : dict, data = r'cogs/player_items.json'):
+def json_load(data_to_load : dict, data = PLAYER_DIRECTORY):
     file = open(data, 'r+')
     f = json.load(file)
     f["data"].update(data_to_load)
@@ -22,7 +23,7 @@ def json_load(data_to_load : dict, data = r'cogs/player_items.json'):
     file.close()
 
 #returns a requested player info as a dict
-def json_get_player_info(player_name, data = r'cogs/player_items.json'):
+def json_get_player_info(player_name, data = PLAYER_DIRECTORY):
     with open(data, 'r+') as file:
         f = json.load(file)
         for i in f["data"].keys():
@@ -82,6 +83,8 @@ class CreateChar(commands.Cog):
                                 "hp" : player.hp,
                                 "mp" : player.mp,
                                 "char_name": player.name,
+                                "level" : 1,
+                                "exp" : 0,
                                 "inventory" : {
                                     "gold": 100,
                                     "items": {
@@ -126,7 +129,8 @@ class CreateChar(commands.Cog):
             'type': 'rich',
             'title': 'Character Stats: ',
             'fields': {'intl': [player.int, 'Intellignece'], 'str': [player.str, 'Strength'] , 'dex': [player.dex, 'Dexterity'],
-            'gold': [player.gold,'Gold'], 'gear': [player.gear,'Gear'], 'inventory': [player.inventory, 'Inventory']},
+            'gold': [player.gold,'Gold'], 'gear': [player.gear,'Gear'], 'inventory': [player.inventory, 'Inventory'],
+            'level': [player.level, 'Level'], "exp" : [player.exp, "Experience"]},
             'footer':'Character Name:' + player.name 
             }
             #player stats embed
@@ -146,6 +150,10 @@ class CreateChar(commands.Cog):
                 #gold amount
             embed_player_stats_msg.add_field(name = embed_player_stats.get('fields').get('gold')[1],
             value = embed_player_stats.get('fields').get('gold')[0], 
+            inline = True)
+                #gold amount
+            embed_player_stats_msg.add_field(name = embed_player_stats.get('fields').get('level')[1],
+            value = embed_player_stats.get('fields').get('level')[0], 
             inline = True)
                 #gear
             embed_player_stats_msg.add_field(name = embed_player_stats.get('fields').get('gear')[1],

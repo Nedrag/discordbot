@@ -12,10 +12,21 @@ class Player:
         self.int = json_load_player(self.id)['int'] 
         self.dex = json_load_player(self.id)['dex'] 
         self.name = json_load_player(self.id)['char_name'] 
+        self.armor = 0
+        self.level = 1
+        self. exp = 0
 
         self.inventory = json_load_player(self.id)['inventory'] 
         self.gear = self.inventory['gear'] 
         self.gold = self.inventory['gold']
+    
+    def player_level_up(self, data = r'cogs/player_items.json'):
+        with open(data, 'w') as file:
+            f = json.load(file)
+            temp = f['data'][self.id]
+            temp['level'] += 1
+            json.dump(temp, file, indent = 4, sort_keys= True)
+
 
 
     def player_take_dmg(self, amount):

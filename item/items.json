@@ -1,0 +1,16 @@
+{
+    "data":{
+            "test_id#0000": {
+            "name": "TEST",
+            "price" : 99
+        },
+            "armour#0001":{
+
+                "name": "Leather Boots",
+                "price" : 2,
+                "stats" : "+12.+12.+7",
+                "armor": 20 
+                
+            }
+    }
+}
